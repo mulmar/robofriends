@@ -3,6 +3,9 @@ import Card from './Card'// uses card component
 
 const Cardlist = (fromApp) => {//the cardlist gets input form the App component which is the array with the filtered robots
  //   const { robots, fake} = fromApp;
+ if (true) {
+     throw new Error('neeeeee!')
+ }
     return (
         //loops the array per line and sends every line to the card component
              fromApp.robots.map((entry,i) =>{

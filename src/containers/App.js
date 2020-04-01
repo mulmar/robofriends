@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
 import Scroll from '../components/Scroll';
+import ErrorBoundry from '../components/ErrorBoundry';
 import Cardlist from '../components/Cardlist';// shares props with cardlsit, and uses the output from cardlist
 import Searchbox from '../components/Searchbox';// shares props with searchbox, and uses the output from searchbox
 //import { robots } from './robots';  // we need the {} because the robots.js can export multiple outputs; uses the robot object to send info to other 
@@ -39,7 +40,9 @@ class App extends React.Component {
                 <h1 className='f1'>Robofriends</h1>
                 <Searchbox searchChange={this.onSearchChange}/>
                    <Scroll>
+                       <ErrorBoundry>
                 <Cardlist robots={filteredRobots}/> 
+                </ErrorBoundry>
                     </Scroll>
             </div>
             </Fragment>
