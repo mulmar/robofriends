@@ -3,39 +3,44 @@ import Scroll from '../components/Scroll';
 import ErrorBoundry from '../components/ErrorBoundry';
 import Cardlist from '../components/Cardlist';// shares props with cardlsit, and uses the output from cardlist
 import Searchbox from '../components/Searchbox';// shares props with searchbox, and uses the output from searchbox
-import { setSearchField } from '../actions'; // we need the action to create a new state
+import { setSearchField, requestRobots } from '../actions'; // we need the action to create a new state
 import { connect } from 'react-redux'; // method to make components aware of the redux state (it will make the subscibe method redundant)
 //import { robots } from './robots';  // we need the {} because the robots.js can export multiple outputs; uses the robot object to send info to other 
 
 // to which piece of state should the APP component listen to, and send it as props to the App
 const mapStateToProps = (state) => { // receives a state and returns an object (the object is going to be used as props by the App component)
     return{
-        searchField: state.searchField // the searchfield state is coming from the reducer   (should be state.searchRobots.searchField)
+        searchField: state.searchRobots.searchField, // the searchfield state is coming from the reducer 
+        robots: state.requestRobots.robots,
+        error: state.requestRobots.error,
+        isPending: state.requestRobots.isPending
     }
 }
 
 //which props the app components should be listen to that are actions and need to get dispatched
 const mapDispatchToProps = (dispatch) => { // the prop dispatch (redux naming convention) is send into the reducer
     return {
-        onSearchChange: (event) => dispatch(setSearchField(event.target.value)) // onsearchChange is a functions that dispatches the actions.js to the reducer. This listens to the event of the action
+        onSearchChange: (event) => dispatch(setSearchField(event.target.value)), // onsearchChange is a functions that dispatches the actions.js to the reducer. This listens to the event of the action
+        onRequestRobots: () => dispatch(requestRobots())
     }
 }
 
 
 class App extends React.Component {
-    constructor() {// constructor is the part which is run first when the App is called
-        super()//super makes sure the constructor is run first
-        this.state = { // reads input from searchfield and uses this to send a filtered array to the cardlist component
-            robots : []//,
+ //  constructor() {// constructor is the part which is run first when the App is called
+ //       super()//super makes sure the constructor is run first
+ //       this.state = { // reads input from searchfield and uses this to send a filtered array to the cardlist component
+  //          robots : []//,
  //           searchfield: ''
-        }
-    }
+  //      }
+ //   }
 
     componentDidMount(){// make a call to website
 //        console.log(this.props.store.getState())
-         fetch('https://jsonplaceholder.typicode.com/users')
-        .then(response => response.json()) // convert the response into a json
-        .then(users => this.setState({robots: users})); // fill the robots array with the users
+ //        fetch('https://jsonplaceholder.typicode.com/users')
+ //       .then(response => response.json()) // convert the response into a json
+  //      .then(users => this.setState({robots: users})); // fill the robots array with the users
+  this.props.onRequestRobots();
     }
 
     // the first real function/method in the App class
@@ -46,10 +51,11 @@ class App extends React.Component {
 //        }) }
 
     render() {
+        console.log(this.props);
         const filteredRobots = 
-        this.state.robots.filter(robot =>{return robot.name.toLowerCase().includes(this.props.searchField.toLowerCase());})
+        this.props.robots.filter(robot =>{return robot.name.toLowerCase().includes(this.props.searchField.toLowerCase());})
         //the array filtered robots only holds the lines that contain the string from the searchbox, the array is send to the cardlist
-        if (this.state.robots.length === 0 ) { // check if the robots are loaded, if not show loading
+        if (this.props.isPending) { // check if the robots are loaded, if not show loading
             return <h1>Loading</h1>
         }
         else{ // otherwise show the robots
