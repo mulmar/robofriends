@@ -3,14 +3,18 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import './containers/App.css';
 import App from './containers/App';
+import { createLogger} from 'redux-logger'
 import * as serviceWorker from './serviceWorker';
 import 'tachyons';
-import { Provider} from 'react-redux';
-import { createStore } from 'redux';
-import { searchRobots} from './reducers'
+import { Provider} from 'react-redux'; // needed to provide the state (=store) to all the components downs the component tree
+import { createStore, applyMiddleware } from 'redux'; // needed to create the store
+import { searchRobots} from './reducers'; // import the reducer which needs to be passed into the store
 
-const store = createStore(searchRobots);
+const logger = createLogger();
+
+const store = createStore(searchRobots, applyMiddleware(logger));
 //provider components will make sure the store will drip down to every conponent in the component tree
+//console.log(store.getState());
 ReactDOM.render(
 <Provider store={store}> 
     <App />
